@@ -1,0 +1,635 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>식물 실험 결과지</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;700&family=Gothic+A1:wght@400;500;700&display=swap">
+<style>
+/* Layout: one-thing-per-screen wizard. Home → choose experiment → 7 big steps → result sheet image. Large touch targets for students with special needs. */
+:root{
+  --bg:#F3F6EE; --surface:#FFFFFF; --surface-2:#E9F0E1; --ink:#1E2B1F; --ink-soft:#55635A; --line:#CBD7C1;
+  --leaf:#2F7D3B; --leaf-soft:#DDEFD8; --dye:#C42339; --dye-soft:#FBE2E6; --water:#2A78C2; --water-soft:#DCEAF8;
+  --root-b:#C96F1C; --root-b-soft:#FBEAD7; --ok:#2F7D3B; --ok-soft:#DDEFD8; --warn:#B8560F; --warn-soft:#FCEBDD;
+  --accent:var(--leaf); --accent-soft:var(--leaf-soft);
+  --display:"IBM Plex Sans KR","Gothic A1",system-ui,sans-serif; --body:"Gothic A1",system-ui,-apple-system,sans-serif; --grid:#DFE8E3;
+  --r:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131915; --surface:#1C241E; --surface-2:#243027; --ink:#EAF1E6; --ink-soft:#A8B6AA; --line:#36463A;
+  --leaf:#6CC27A; --leaf-soft:#1E3923; --dye:#FF7486; --dye-soft:#3F1D24; --water:#6BB1F0; --water-soft:#16314A;
+  --root-b:#F0A35A; --root-b-soft:#3C2916; --ok:#6CC27A; --ok-soft:#1E3923; --warn:#F2A25E; --warn-soft:#3C2816; --grid:#1F2A22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131915; --surface:#1C241E; --surface-2:#243027; --ink:#EAF1E6; --ink-soft:#A8B6AA; --line:#36463A;
+  --leaf:#6CC27A; --leaf-soft:#1E3923; --dye:#FF7486; --dye-soft:#3F1D24; --water:#6BB1F0; --water-soft:#16314A;
+  --root-b:#F0A35A; --root-b-soft:#3C2916; --ok:#6CC27A; --ok-soft:#1E3923; --warn:#F2A25E; --warn-soft:#3C2816; --grid:#1F2A22; color-scheme:dark}
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.55;word-break:keep-all;overflow-wrap:break-word;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 120px}
+#app{max-width:860px;margin:0 auto}
+#app[data-exp="lily"],#nav[data-exp="lily"]{--accent:var(--dye);--accent-soft:var(--dye-soft)}
+#app[data-exp="onion"]{--accent:var(--leaf);--accent-soft:var(--leaf-soft)}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(32px,6.5vw,44px);letter-spacing:-.02em}
+h2{font-size:clamp(26px,5vw,32px);letter-spacing:-.01em}
+h3{font-size:22px}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,label.upload:focus-within{outline:4px solid var(--water);outline-offset:3px}
+.stack{display:flex;flex-direction:column;gap:20px}
+.soft{color:var(--ink-soft)}
+
+/* home */
+.hero{display:flex;flex-direction:column;gap:8px;padding-block:8px 4px}
+.hero p{font-size:20px;color:var(--ink-soft)}
+.who{display:grid;grid-template-columns:2fr 1fr;gap:14px;background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:18px}
+.who label{display:flex;flex-direction:column;gap:6px;font-weight:700;min-width:0}
+.who input{font:inherit;font-size:22px;padding:12px 14px;border:3px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.expcard{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;background:var(--surface);border:3px solid var(--line);border-radius:24px;padding:22px 14px 20px;transition:transform .15s,border-color .15s}
+.expcard:hover{transform:translateY(-3px)}
+.expcard.lily{border-color:color-mix(in srgb,var(--dye) 45%,var(--line))}
+.expcard.onion{border-color:color-mix(in srgb,var(--leaf) 45%,var(--line))}
+.expcard svg{width:130px;height:130px}
+.expcard .nm{font-family:var(--display);font-weight:700;font-size:26px}
+.expcard .q{color:var(--ink-soft);font-size:17px}
+.expcard .go{margin-top:4px;font-weight:700;padding:10px 22px;border-radius:999px;color:#fff;font-size:19px}
+.expcard.lily .go{background:var(--dye)} .expcard.onion .go{background:var(--leaf)}
+:root[data-theme="dark"] .expcard .go{color:#111}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .expcard .go{color:#111}}
+.badge{font-size:15px;font-weight:700;padding:3px 12px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft)}
+
+/* flow */
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.home-btn{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-weight:700;font-size:17px}
+.topbar .t{font-family:var(--display);font-weight:700;font-size:22px;color:var(--accent)}
+.steps{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin}
+.chip{flex:0 0 auto;display:flex;align-items:center;gap:6px;border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:700;font-size:16px;color:var(--ink-soft)}
+.chip .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--surface-2);font-size:13px}
+.chip.done .n{background:var(--ok);color:var(--surface)}
+.chip.cur{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:22px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.head .sub{font-size:20px;color:var(--ink-soft);margin-top:6px}
+.say{flex:0 0 auto;display:flex;align-items:center;gap:6px;border:2px solid var(--water);color:var(--water);background:var(--water-soft);border-radius:999px;padding:8px 14px;font-weight:700;font-size:16px}
+.say svg{width:22px;height:22px}
+.qtitle{font-family:var(--display);font-weight:700;font-size:22px;display:flex;align-items:center;gap:10px}
+.qtitle .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+.section{display:flex;flex-direction:column;gap:12px}
+
+.choices{display:grid;gap:12px}
+.choices.c3{grid-template-columns:repeat(3,1fr)}
+.choices.c4{grid-template-columns:repeat(4,1fr)}
+.choices.c2{grid-template-columns:repeat(2,1fr)}
+.choices.c1{grid-template-columns:1fr}
+.choice{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:64px;padding:14px 12px;border:3px solid var(--line);border-radius:16px;background:var(--surface);font-weight:700;font-size:18px;text-align:center;transition:transform .1s}
+.choice:active{transform:scale(.97)}
+.choice.row{flex-direction:row;justify-content:flex-start;text-align:left;padding:14px 18px}
+.choice[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.choice[aria-pressed="true"]::after{content:"✓";position:absolute;top:-12px;right:-10px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center;font-size:17px}
+.choice.right{border-color:var(--ok);background:var(--ok-soft)}
+.choice.right::after{background:var(--ok)}
+.choice.wrong{border-color:var(--warn);background:var(--warn-soft)}
+.choice.wrong::after{content:"!";background:var(--warn)}
+.swatch{width:54px;height:54px;border-radius:50%;border:3px solid rgba(0,0,0,.12)}
+.face{font-size:40px;line-height:1}
+
+.upload{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:200px;border:3px dashed var(--accent);border-radius:20px;background:var(--accent-soft);cursor:pointer;text-align:center;padding:18px;font-weight:700;font-size:21px}
+.upload svg{width:56px;height:56px;color:var(--accent)}
+.upload input{position:absolute;opacity:0;width:1px;height:1px}
+.photo{display:flex;flex-direction:column;gap:10px}
+.photo img{width:100%;max-height:360px;object-fit:contain;border-radius:16px;background:var(--surface-2)}
+.photo .acts{display:flex;gap:10px;flex-wrap:wrap}
+.pgroup{border:3px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.pgroup.before{border-color:color-mix(in srgb,var(--leaf) 45%,var(--line))}
+.pgroup.after{border-color:color-mix(in srgb,var(--dye) 45%,var(--line))}
+.pgh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font-size:19px}
+.pgh .soft{font-size:16px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pslot{display:flex;flex-direction:column;gap:6px;min-width:0}
+.plabel{font-weight:700;font-size:17px}
+.upload.sm{min-height:150px;font-size:18px;padding:10px;gap:6px}
+.upload.sm svg{width:40px;height:40px}
+.upload.sm .soft{display:none}
+.pslot .photo img,.pview{width:100%;height:170px;max-height:none;object-fit:contain;border-radius:14px;background:var(--surface-2)}
+.pslot .acts{gap:6px}.pslot .small-btn{padding:6px 10px;font-size:15px}
+.pempty{height:120px;display:grid;place-items:center;border-radius:14px;background:var(--surface-2);color:var(--ink-soft);font-size:16px}
+.small-btn{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 16px;font-weight:700;font-size:17px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.small-btn input{position:absolute;opacity:0;width:1px;height:1px}
+
+textarea{font:inherit;font-size:19px;width:100%;min-height:90px;padding:12px 14px;border:3px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);resize:vertical}
+
+.ol{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.ol li{display:flex;gap:12px;align-items:flex-start;font-size:20px}
+.ol .num{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:18px}
+.illus{display:flex;justify-content:center;background:var(--surface-2);border-radius:20px;padding:14px}
+.illus svg{width:100%;max-width:340px;height:auto}
+
+/* onion pair */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plant{border:3px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.plant.A{border-color:color-mix(in srgb,var(--leaf) 50%,var(--line))}
+.plant.B{border-color:color-mix(in srgb,var(--root-b) 50%,var(--line))}
+.tag{align-self:flex-start;font-weight:700;font-size:17px;padding:4px 12px;border-radius:999px}
+.A .tag{background:var(--leaf-soft);color:var(--leaf)} .B .tag{background:var(--root-b-soft);color:var(--root-b)}
+.cylwrap{display:flex;gap:10px;align-items:center;justify-content:center}
+.cylwrap svg{width:96px;height:auto;flex:0 0 auto}
+.val{font-family:var(--display);font-weight:700;font-size:32px;text-align:center;font-variant-numeric:tabular-nums}
+.val small{font-size:18px;color:var(--ink-soft);margin-left:3px}
+.startbox{display:flex;align-items:center;justify-content:center;gap:24px}
+.cylwrap.big svg{width:140px}
+.val.big{font-size:52px}
+.bigstep{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.bigstep button{min-height:60px;border-radius:16px;border:3px solid var(--line);background:var(--surface);font-family:var(--display);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums}
+.bigstep button:active{transform:scale(.96)}
+.bigstep button:nth-child(-n+2){color:var(--root-b)} .bigstep button:nth-child(n+3){color:var(--water)}
+.startrange{width:100%;accent-color:var(--water);height:36px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.presets .soft{font-size:16px;margin-right:4px}
+.presets .small-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.stepper{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stepper button{flex:1 1 0;min-width:48px;height:48px;border-radius:14px;border:3px solid var(--line);background:var(--surface);font-size:26px;font-weight:700;line-height:1}
+.stepper input[type=range]{order:3;flex:1 1 100%;min-width:0;accent-color:var(--water);height:32px}
+.plant .choices{grid-template-columns:1fr 1fr;gap:8px}
+.plant .choice{min-height:56px;font-size:15px;padding:8px 6px;gap:4px}
+.plant .choice svg{width:34px;height:34px}
+
+/* result */
+.rtable{overflow-x:auto}
+.rtable table{border-collapse:separate;border-spacing:8px;width:100%;min-width:420px}
+.rtable th{font-family:var(--display);font-weight:700;font-size:18px}
+.rtable td{text-align:center;background:var(--surface-2);border-radius:14px;padding:10px 6px;font-weight:700;font-size:16px}
+.rtable td .swatch{width:40px;height:40px;margin:0 auto 4px}
+.rtable td img{width:100%;max-width:150px;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block;margin:0 auto}
+.say-box{background:var(--accent-soft);border-radius:18px;padding:18px 20px;font-size:21px;font-weight:700;display:flex;gap:12px;align-items:flex-start}
+.say-box .ico{flex:0 0 auto;font-size:26px;line-height:1.2}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.compare .plant{align-items:center;text-align:center}
+.drop{font-family:var(--display);font-weight:700;font-size:24px}
+.drop.big{color:var(--water)}
+.fb{font-weight:700;font-size:19px;padding:12px 16px;border-radius:14px}
+.fb.ok{background:var(--ok-soft);color:var(--ok)}
+.fb.no{background:var(--warn-soft);color:var(--warn)}
+.concept{border:3px solid var(--ok);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;background:var(--surface)}
+.concept .lb{font-family:var(--display);font-weight:700;color:var(--ok);font-size:20px}
+.concept p{font-size:21px;font-weight:700}
+.sheet{display:flex;flex-direction:column;gap:14px;align-items:center}
+.sheet img{width:100%;border-radius:12px;border:2px solid var(--line);background:#fff}
+.save{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:68px;border:none;border-radius:20px;background:var(--water);color:#fff;font-family:var(--display);font-weight:700;font-size:24px}
+.save svg{width:30px;height:30px}
+.msg{font-weight:700;text-align:center}
+
+/* bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-top:2px solid var(--line);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.nav .in{max-width:860px;margin:0 auto;display:flex;gap:12px}
+.nav button{flex:1;min-height:62px;border-radius:18px;font-family:var(--display);font-weight:700;font-size:23px;border:3px solid var(--line);background:var(--surface)}
+.nav .next{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.reset-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center}
+.link-btn{border:none;background:none;color:var(--ink-soft);text-decoration:underline;font-size:16px;padding:8px}
+.danger{border:2px solid var(--warn);color:var(--warn);background:var(--warn-soft);border-radius:12px;padding:8px 14px;font-weight:700;font-size:16px}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pop{animation:pop .35s ease}
+.shake{animation:shake .3s ease}
+@media (prefers-reduced-motion: reduce){.pop,.shake{animation:none}.expcard{transition:none}}
+
+@media (max-width:560px){
+  body{font-size:18px}
+  .who{grid-template-columns:1fr}
+  .pick{grid-template-columns:1fr}
+  .choices.c4{grid-template-columns:repeat(2,1fr)}
+  .choices.c3{grid-template-columns:1fr}
+  .choices.c3 .choice{flex-direction:row;justify-content:flex-start;padding:12px 16px}
+  .card{padding:18px}
+  .pair,.compare{gap:8px}
+  .plant{padding:10px}
+  .cylwrap svg{width:70px}
+  .plant .choices{grid-template-columns:1fr}
+  .plant .choice{flex-direction:row;justify-content:flex-start;text-align:left;padding:8px 10px}
+  .plant .choice svg{width:28px;height:28px}
+  .say span{display:none}
+}
+</style>
+
+<div id="app"></div>
+<div class="nav" id="nav" hidden><div class="in"><button id="prev" type="button">◀ 이전</button><button id="next" class="next" type="button">다음 ▶</button></div></div>
+
+<script>
+(function(){
+"use strict";
+const STORE='plant-lab-v2';
+const STEPS=['준비','관찰하기','결과','결론','결과지'];
+const LILY_COLORS=[{id:'green',label:'초록색',hex:'#5DA34B'},{id:'lightpink',label:'연한 분홍색',hex:'#F4B6C2'},{id:'pink',label:'분홍색',hex:'#E3607F'},{id:'red',label:'빨간색',hex:'#C42339'}];
+const GROW=[{id:'none',label:'그대로예요'},{id:'little',label:'조금 자랐어요'},{id:'lot',label:'많이 자랐어요'},{id:'wilt',label:'시들었어요'}];
+const FEEL=[{id:'fun',face:'😊',label:'재미있었어요'},{id:'ok',face:'🙂',label:'보통이에요'},{id:'hard',face:'😥',label:'어려웠어요'}];
+const LPRED=[{id:'red',label:'줄기와 잎이 빨갛게 변해요'},{id:'same',label:'색이 그대로예요'},{id:'unknown',label:'잘 모르겠어요'}];
+const OPRED=[{id:'A',label:'뿌리 있는 파'},{id:'B',label:'뿌리 없는 파'},{id:'same',label:'똑같아요'}];
+const LQ=[
+ {q:'빨간 물은 어디로 갔나요?',opts:[{id:'up',t:'줄기를 따라 잎까지 올라갔어요'},{id:'stay',t:'컵 안에 그대로 있어요'},{id:'down',t:'흙 속으로 내려갔어요'}],ans:'up',hint:'줄기와 잎의 색이 어떻게 변했는지 다시 보세요.'},
+ {q:'줄기는 어떤 일을 할까요?',opts:[{id:'path',t:'물이 이동하는 길이에요'},{id:'flower',t:'꽃잎을 만들어요'},{id:'nothing',t:'아무 일도 안 해요'}],ans:'path',hint:'빨간 물이 줄기를 지나서 잎까지 갔어요.'}];
+const LCONCEPT='줄기에는 물이 이동하는 통로가 있어요. 뿌리에서 흡수한 물은 줄기를 따라 잎과 꽃으로 이동해요.';
+const OQ=[
+ {q:'어느 쪽 물이 더 많이 줄었나요?',opts:[{id:'A',t:'뿌리 있는 파의 물'},{id:'B',t:'뿌리 없는 파의 물'},{id:'same',t:'똑같이 줄었어요'}],ans:null,hint:'결과 화면의 눈금실린더를 다시 보세요.'},
+ {q:'뿌리는 어떤 일을 할까요?',opts:[{id:'absorb',t:'물을 흡수해요 (빨아들여요)'},{id:'make',t:'물을 만들어요'},{id:'nothing',t:'아무 일도 안 해요'}],ans:'absorb',hint:'뿌리가 있는 파의 물이 더 많이 줄었어요.'}];
+const OCONCEPT='뿌리는 식물에 필요한 물을 흡수해요. 그래서 뿌리가 있는 파의 물이 더 많이 줄어들었어요.';
+
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fresh(){return{
+  name:'',date:today(),
+  lily:{predict:null,photos:{bw:null,bc:null,aw:null,ac:null},stem:null,leaf:null,memo:'',a:[null,null],feel:null,note:''},
+  onion:{start:150,predict:null,photo:null,wA:null,wB:null,gA:null,gB:null,a:[null,null],feel:null,note:''},
+  view:{screen:'home',exp:null,step:0}}}
+let S;
+try{S=JSON.parse(localStorage.getItem(STORE))}catch(e){S=null}
+if(!S||!S.lily||!S.onion)S=fresh();
+if(!S.lily.photos)S.lily.photos={bw:null,bc:null,aw:null,ac:null};
+let saveT;
+function persist(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){
+  try{const c=JSON.parse(JSON.stringify(S));c.lily.photos={};c.onion.photo=null;localStorage.setItem(STORE,JSON.stringify(c))}catch(e2){}}},300)}
+
+const app=document.getElementById('app'),nav=document.getElementById('nav');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const canSpeak='speechSynthesis' in window;
+function speak(t){if(!canSpeak)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ko-KR';u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
+const ICON_SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const ICON_CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2.5l1.5-2h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg>';
+const ICON_SAVE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>';
+function sayBtn(text){return canSpeak?`<button type="button" class="say" data-act="say" data-text="${esc(text)}">${ICON_SPK}<span>읽어 줘요</span></button>`:''}
+
+/* ---------- illustrations ---------- */
+function lilySVG(red){const s=red?'#C42339':'#5DA34B',l=red?'#B9475A':'#6BB257';return `<svg viewBox="0 0 200 200" aria-hidden="true">
+<path d="M70 120 L70 150 L45 190 L155 190 L130 150 L130 120 Z" fill="#E7F1FA" stroke="#7A9BB8" stroke-width="4" stroke-linejoin="round"/>
+<path d="M58 165 L142 165 L152 186 L48 186 Z" fill="#E0465B" opacity=".85"/>
+<path d="M100 186 C100 140 101 90 100 50" stroke="${s}" stroke-width="7" fill="none" stroke-linecap="round"/>
+<ellipse cx="78" cy="98" rx="24" ry="8" transform="rotate(-30 78 98)" fill="${l}"/>
+<ellipse cx="124" cy="80" rx="24" ry="8" transform="rotate(30 124 80)" fill="${l}"/>
+<path d="M100 52 C80 40 70 20 76 8 C88 18 96 30 100 44 C104 30 112 18 124 8 C130 20 120 40 100 52Z" fill="${red?'#F6C9D1':'#FFFFFF'}" stroke="#C9B9A6" stroke-width="3"/>
+<path d="M100 50 C96 34 98 18 100 6 C102 18 104 34 100 50Z" fill="${red?'#F2AFBD':'#FAF6EE'}" stroke="#C9B9A6" stroke-width="2"/></svg>`}
+function onionSVG(){return `<svg viewBox="0 0 200 200" aria-hidden="true">
+${[40,120].map((x,i)=>`<rect x="${x}" y="40" width="44" height="150" rx="6" fill="#E7F1FA" stroke="#7A9BB8" stroke-width="4"/>
+<rect x="${x+3}" y="${i?92:118}" width="38" height="${i?95:69}" fill="#7DB6E6" opacity=".7"/>
+<line x1="${x-4}" y1="92" x2="${x+10}" y2="92" stroke="#C42339" stroke-width="4"/>
+<path d="M${x+16} 20 L${x+16} 120 M${x+22} 10 L${x+22} 120 M${x+28} 22 L${x+28} 120" stroke="#4E9A3E" stroke-width="5" stroke-linecap="round"/>
+<ellipse cx="${x+22}" cy="140" rx="13" ry="18" fill="#FBFBF5" stroke="#CFC8B4" stroke-width="3"/>
+${i===0?`<path d="M${x+14} 156 q-4 14 -2 26 M${x+20} 158 q0 14 -4 26 M${x+26} 158 q2 14 6 24 M${x+31} 155 q4 12 2 26" stroke="#E8DFC5" stroke-width="2.5" fill="none"/>`:''}`).join('')}
+<text x="62" y="30" text-anchor="middle" font-size="0">A</text></svg>`}
+function cylSVG(v,start){const top=14,bot=196,H=bot-top;const y=val=>bot-(Math.max(0,Math.min(200,val))/200)*H;
+  let ticks='';for(let t=0;t<=200;t+=50){ticks+=`<line x1="18" y1="${y(t)}" x2="30" y2="${y(t)}" stroke="currentColor" stroke-width="2"/><text x="14" y="${y(t)+5}" text-anchor="end" font-size="13" fill="currentColor">${t}</text>`}
+  return `<svg viewBox="-16 0 112 206" aria-hidden="true" style="color:var(--ink-soft)">
+  <rect x="18" y="${top-4}" width="60" height="${H+4}" rx="6" fill="var(--water-soft)" opacity=".35" stroke="currentColor" stroke-width="3"/>
+  <rect class="wtr" x="21" y="${y(v)}" width="54" height="${bot-y(v)}" fill="var(--water)" opacity=".75"/>
+  ${ticks}
+  <line x1="12" y1="${y(start)}" x2="84" y2="${y(start)}" stroke="var(--dye)" stroke-width="3.5" stroke-dasharray="6 4"/>
+  </svg>`}
+function sproutSVG(id){const c={none:'M17 30 V18',little:'M17 30 V12',lot:'M17 30 V4',wilt:'M17 30 V18 Q17 12 26 14'}[id];
+  return `<svg viewBox="0 0 34 34" aria-hidden="true"><ellipse cx="17" cy="30" rx="8" ry="3" fill="var(--line)"/><path d="${c}" stroke="${id==='wilt'?'var(--root-b)':'var(--leaf)'}" stroke-width="4" fill="none" stroke-linecap="round"/>${id==='lot'?'<path d="M17 16 L10 9 M17 12 L24 6" stroke="var(--leaf)" stroke-width="3.5" stroke-linecap="round"/>':''}</svg>`}
+
+/* ---------- helpers ---------- */
+const E=()=>S[S.view.exp];
+function choice(group,val,cur,inner,cls=''){return `<button type="button" class="choice ${cls}" data-act="pick" data-g="${group}" data-v="${val}" aria-pressed="${cur===val}">${inner}</button>`}
+const LPH=[{g:'색소 물에 꽂지 않은 백합',sub:'비교용',items:[['bw','전체 모습'],['bc','줄기 단면']]},{g:'색소 물에 꽂아 둔 백합',sub:'실험용',items:[['aw','전체 모습'],['ac','줄기 단면']]}];
+function getPhoto(key){const[x,k]=key.split('.');return k?S[x].photos[k]:S[x].photo}
+function setPhoto(key,v){const[x,k]=key.split('.');if(k)S[x].photos[k]=v;else S[x].photo=v}
+function lilyPhotos(){return `<div class="section"><div class="qtitle"><span class="dot"></span>실험 사진 4장 <span class="soft" style="font-size:16px;font-family:var(--body)">(없으면 비워도 돼요)</span></div>
+  ${LPH.map((g,gi)=>`<div class="pgroup ${gi?'after':'before'}"><div class="pgh"><b>${g.g}</b><span class="soft">${g.sub}</span></div>
+  <div class="pgrid">${g.items.map(([k,lb])=>`<div class="pslot"><span class="plabel">${lb}</span>${photoBlock('lily.'+k,S.lily.photos[k],true)}</div>`).join('')}</div></div>`).join('')}</div>`}
+function lilyPhotoView(){if(!Object.values(S.lily.photos).some(Boolean))return '';
+  return LPH.map((g,gi)=>`<div class="pgroup ${gi?'after':'before'}"><div class="pgh"><b>${g.g}</b><span class="soft">${g.sub}</span></div><div class="pgrid">${g.items.map(([k,lb])=>`<div class="pslot"><span class="plabel">${lb}</span>${S.lily.photos[k]?`<img class="pview" src="${S.lily.photos[k]}" alt="${g.g} ${lb}">`:'<div class="pempty">사진 없음</div>'}</div>`).join('')}</div></div>`).join('')}
+function photoBlock(key,photo,small){
+  if(photo)return `<div class="photo"><img src="${photo}" alt="올린 사진"><div class="acts">
+  <label class="small-btn">${ICON_CAM.replace('<svg','<svg width="22" height="22"')} 사진 바꾸기<input type="file" accept="image/*" data-photo="${key}"></label>
+  <button type="button" class="small-btn" data-act="delphoto" data-k="${key}">사진 지우기</button></div></div>`;
+  return `<label class="upload${small?' sm':''}">${ICON_CAM}<span>사진 올리기</span><span class="soft" style="font-size:16px;font-weight:500">눌러서 사진을 골라요</span><input type="file" accept="image/*" data-photo="${key}"></label>`}
+function colorLabel(id){return (LILY_COLORS.find(c=>c.id===id)||{}).label}
+function growLabel(id){return (GROW.find(c=>c.id===id)||{}).label}
+function lastWater(o,k){return o['w'+k]}
+function drops(){const o=S.onion,a=lastWater(o,'A'),b=lastWater(o,'B');return{a:a==null?null:o.start-a,b:b==null?null:o.start-b}}
+function onionAns(){const d=drops();if(d.a==null||d.b==null)return'A';if(d.a>d.b)return'A';if(d.b>d.a)return'B';return'same'}
+function qAns(i){return S.view.exp==='lily'?LQ[i].ans:(i===0?onionAns():OQ[1].ans)}
+function stepDone(i){const e=E(),x=S.view.exp;
+  if(i===0)return e.predict!=null;
+  if(i===1||i===2)return x==='lily'?!!(e.stem&&e.leaf):!!(e.wA!=null&&e.wB!=null&&e.gA&&e.gB);
+  if(i===3)return e.a[0]!=null&&e.a[1]!=null;
+  return false}
+function progress(x){const old=S.view.exp;S.view.exp=x;let n=0;for(let i=0;i<4;i++)if(stepDone(i))n++;S.view.exp=old;return n}
+
+/* ---------- screens ---------- */
+function render(){
+  const v=S.view;app.dataset.exp=v.exp||'';nav.dataset.exp=v.exp||'';
+  if(v.screen==='home'){nav.hidden=true;app.innerHTML=homeHTML();return}
+  nav.hidden=false;
+  document.getElementById('prev').style.visibility=v.step===0?'hidden':'visible';
+  document.getElementById('next').hidden=v.step===STEPS.length-1;
+  const title=v.exp==='lily'?'백합 줄기 실험':'파 뿌리 실험';
+  app.innerHTML=`<div class="stack">
+   <div class="topbar"><button type="button" class="home-btn" data-act="home">⌂ 처음 화면</button><span class="t">${title}</span></div>
+   <div class="steps" role="tablist">${STEPS.map((s,i)=>`<button type="button" class="chip ${i===v.step?'cur':''} ${stepDone(i)?'done':''}" data-act="go" data-i="${i}" aria-current="${i===v.step}"><span class="n">${stepDone(i)?'✓':i+1}</span>${s}</button>`).join('')}</div>
+   <div class="card" id="card">${(v.exp==='lily'?lilyStep:onionStep)(v.step)}</div>
+  </div>`;
+  const cur=app.querySelector('.chip.cur');if(cur)cur.scrollIntoView({block:'nearest',inline:'center'});
+  if(v.step===STEPS.length-1)buildSheet();
+}
+function homeHTML(){const pl=progress('lily'),po=progress('onion');
+  return `<div class="stack">
+  <div class="hero"><h1>식물 실험 결과지</h1><p>실험을 고르고, 실험이 끝난 모습을 관찰하고, 결과지를 만들어요.</p></div>
+  <div class="who"><label for="nm">내 이름<input id="nm" data-f="name" value="${esc(S.name)}" placeholder="이름을 써요" autocomplete="off"></label>
+  <label for="dt">날짜<input id="dt" type="date" data-f="date" value="${esc(S.date)}"></label></div>
+  <h2 style="font-size:26px">어떤 실험을 할까요?</h2>
+  <div class="pick">
+   <button type="button" class="expcard lily" data-act="open" data-x="lily">${lilySVG(true)}<span class="nm">백합 줄기 실험</span><span class="q">줄기는 무슨 일을 할까?</span>${pl?`<span class="badge">${pl} / 4 했어요</span>`:''}<span class="go">${pl?'이어서 하기':'시작하기'}</span></button>
+   <button type="button" class="expcard onion" data-act="open" data-x="onion">${onionSVG()}<span class="nm">파 뿌리 실험</span><span class="q">뿌리는 무슨 일을 할까?</span>${po?`<span class="badge">${po} / 4 했어요</span>`:''}<span class="go">${po?'이어서 하기':'시작하기'}</span></button>
+  </div>
+  <div class="reset-row" id="resetrow"><button type="button" class="link-btn" data-act="askreset">기록 모두 지우기</button></div>
+  </div>`}
+function head(t,sub,read){return `<div class="head"><div><h2>${t}</h2>${sub?`<p class="sub">${sub}</p>`:''}</div>${sayBtn(read||(t+'. '+(sub||'')))}</div>`}
+
+function lilyStep(i){const L=S.lily;
+  if(i===0)return head('실험 준비','백합 줄기를 빨간 물에 넣었어요.')+
+   `<div class="illus">${lilySVG(false)}</div>
+   <ol class="ol"><li><span class="num">1</span>빨간 색소를 녹인 물을 준비해요.</li><li><span class="num">2</span>백합 줄기를 빨간 물에 넣어요.</li><li><span class="num">3</span>햇빛이 잘 드는 곳에 두어요.</li><li><span class="num">4</span>며칠 뒤, 줄기와 잎의 색을 봐요.</li></ol>
+   <div class="section"><div class="qtitle"><span class="dot"></span>백합은 어떻게 될까요? (내 예상)</div>
+   <div class="choices c3">${LPRED.map(p=>choice('predict',p.id,L.predict,p.label)).join('')}</div></div>`;
+  if(i===1)return head('관찰하기','두 백합을 비교해요. 사진을 올리고 색을 골라요.')+lilyPhotos()+
+   `<div class="section"><div class="qtitle"><span class="dot"></span>줄기는 무슨 색이 되었나요?</div>
+   <div class="choices c4">${LILY_COLORS.map(c=>choice('stem',c.id,L.stem,`<span class="swatch" style="background:${c.hex}"></span>${c.label}`)).join('')}</div></div>
+   <div class="section"><div class="qtitle"><span class="dot"></span>잎은 무슨 색이 되었나요?</div>
+   <div class="choices c4">${LILY_COLORS.map(c=>choice('leaf',c.id,L.leaf,`<span class="swatch" style="background:${c.hex}"></span>${c.label}`)).join('')}</div></div>
+   <div class="section"><label class="qtitle" for="memo"><span class="dot"></span>더 본 것 <span class="soft" style="font-size:17px;font-family:var(--body)">(안 써도 돼요)</span></label>
+   <textarea id="memo" data-f="memo" placeholder="예) 잎에 빨간 줄이 보여요">${esc(L.memo)}</textarea></div>`;
+  if(i===2){const s=lilySentence();
+   return head('결과 보기','처음과 비교해서 색이 어떻게 변했나요?',s)+
+   lilyPhotoView()+
+   `<div class="rtable"><table><thead><tr><th></th><th>처음</th><th></th><th>실험 뒤</th></tr></thead><tbody>
+   <tr><th>줄기</th>${swCell('green')}<td style="background:none;font-size:28px">→</td>${swCell(L.stem)}</tr>
+   <tr><th>잎</th>${swCell('green')}<td style="background:none;font-size:28px">→</td>${swCell(L.leaf)}</tr></tbody></table></div>
+   <div class="say-box"><span class="ico">🔎</span><span>${esc(s)}</span></div>`}
+  if(i===3)return conclHTML(LQ,LCONCEPT,L);
+  return sheetHTML();
+}
+function photoSec(x){return `<div class="section"><div class="qtitle"><span class="dot"></span>실험 사진 <span class="soft" style="font-size:17px;font-family:var(--body)">(없으면 안 올려도 돼요)</span></div>${photoBlock(x,S[x].photo)}</div>`}
+function swCell(id){const c=LILY_COLORS.find(x=>x.id===id);return `<td>${c?`<span class="swatch" style="background:${c.hex};display:block"></span>${c.label}`:'<span class="soft">—</span>'}</td>`}
+function lilySentence(){const L=S.lily;if(!L.stem&&!L.leaf)return '아직 관찰 기록이 없어요. 관찰하기에서 색을 골라 주세요.';
+  const part=(nm,id)=>!id?'':(id==='green'?`${nm} 실험 뒤에도 초록색 그대로였어요.`:`처음에 초록색이던 ${nm} ${colorLabel(id)}으로 변했어요.`);
+  return [part(L.stem==='green'?'줄기는':'줄기가',L.stem),part(L.leaf==='green'?'잎은':'잎이',L.leaf)].filter(Boolean).join(' ')}
+
+function onionStep(i){const O=S.onion;
+  if(i===0)return head('실험 준비','파 두 개를 물에 넣고 비교해요.')+
+   `<div class="illus">${onionSVG()}</div>
+   <div class="pair"><div class="plant A"><span class="tag">A 뿌리 있는 파</span><span style="font-size:17px">잎만 잘라요.</span></div><div class="plant B"><span class="tag">B 뿌리 없는 파</span><span style="font-size:17px">잎과 뿌리를 잘라요.</span></div></div>
+   <ol class="ol"><li><span class="num">1</span>눈금실린더 두 개에 같은 양의 물을 넣어요.</li><li><span class="num">2</span>파를 넣고, 물 높이를 빨간 펜으로 표시해요.</li><li><span class="num">3</span>햇빛이 잘 드는 곳에 두고, 며칠 뒤에 봐요.</li></ol>
+   <div class="section"><div class="qtitle"><span class="dot"></span>처음 물은 몇 mL였나요?</div>
+   <div class="startbox"><div class="cylwrap big" id="startcyl">${cylSVG(O.start,O.start)}</div><div class="val big" id="sv">${O.start}<small>mL</small></div></div>
+   <div class="bigstep">${[-10,-1,1,10].map(d=>`<button type="button" data-act="nud" data-k="start" data-d="${d}" aria-label="${Math.abs(d)} ${d<0?'줄이기':'늘리기'}">${d<0?'−':'+'}${Math.abs(d)}</button>`).join('')}</div>
+   <input class="startrange" type="range" min="0" max="200" step="1" value="${O.start}" data-w="start" aria-label="처음 물 양">
+   <div class="presets"><span class="soft">빨리 고르기</span>${[100,150,200].map(v=>`<button type="button" class="small-btn" data-act="setstart" data-v="${v}" aria-pressed="${O.start===v}">${v} mL</button>`).join('')}</div></div>
+   <div class="section"><div class="qtitle"><span class="dot"></span>어느 쪽 물이 더 많이 줄어들까요? (내 예상)</div>
+   <div class="choices c3">${OPRED.map(p=>choice('predict',p.id,O.predict,p.label)).join('')}</div></div>`;
+  if(i===1){['A','B'].forEach(k=>{if(O['w'+k]==null)O['w'+k]=O.start});persist();
+   return head('관찰하기','실험이 끝난 파를 봐요. 사진을 올리고, 물 높이와 자란 정도를 골라요.')+photoSec('onion')+
+   `<div class="section"><div class="qtitle"><span class="dot"></span>물은 몇 mL 남았나요?</div>
+   <p class="soft" style="font-size:17px">빨간 점선은 처음 물 높이예요.</p>
+   <div class="pair">${['A','B'].map(k=>`<div class="plant ${k}" data-plant="${k}"><span class="tag">${k} ${k==='A'?'뿌리 있는 파':'뿌리 없는 파'}</span>
+     <div class="cylwrap">${cylSVG(O['w'+k],O.start)}</div><div class="val" data-vv="${k}">${O['w'+k]}<small>mL</small></div>
+     <div class="stepper"><button type="button" data-act="nud" data-k="w${k}" data-d="-1" aria-label="1 줄이기">−</button><input type="range" min="0" max="200" step="1" value="${O['w'+k]}" data-w="w${k}" aria-label="${k} 물 양"><button type="button" data-act="nud" data-k="w${k}" data-d="1" aria-label="1 늘리기">+</button></div>
+     </div>`).join('')}</div></div>
+   <div class="section"><div class="qtitle"><span class="dot"></span>파는 얼마나 자랐나요?</div>
+   <div class="pair">${['A','B'].map(k=>`<div class="plant ${k}"><span class="tag">${k} ${k==='A'?'뿌리 있는 파':'뿌리 없는 파'}</span>
+     <div class="choices">${GROW.map(g=>choice('g'+k,g.id,O['g'+k],sproutSVG(g.id)+g.label)).join('')}</div></div>`).join('')}</div></div>`}
+  if(i===2){const dr=drops(),s=onionSentence();
+   return head('결과 보기','어느 쪽 물이 더 많이 줄었을까요?',s)+
+   (O.photo?`<div class="photo"><img src="${O.photo}" alt="실험 사진"></div>`:'')+
+   `<div class="compare">${['A','B'].map(k=>{const last=O['w'+k],dd=dr[k.toLowerCase()];const big=dr.a!=null&&dr.b!=null&&dd===Math.max(dr.a,dr.b)&&dr.a!==dr.b;
+     return `<div class="plant ${k}"><span class="tag" style="align-self:center">${k} ${k==='A'?'뿌리 있는 파':'뿌리 없는 파'}</span>
+     <div class="cylwrap">${cylSVG(last??O.start,O.start)}</div>
+     <div style="font-size:16px" class="soft">처음 ${O.start} mL → 실험 뒤 ${last??'—'} mL</div>
+     <div class="drop ${big?'big':''}">${dd==null?'—':dd+' mL'} 줄었어요</div>
+     <div style="font-size:16px">자란 정도: <b>${growLabel(O['g'+k])||'—'}</b></div></div>`}).join('')}</div>
+   <div class="say-box"><span class="ico">🔎</span><span>${esc(s)}</span></div>`}
+  if(i===3)return conclHTML(OQ,OCONCEPT,O);
+  return sheetHTML();
+}
+function onionSentence(){const d=drops();if(d.a==null||d.b==null)return '아직 물 높이 기록이 없어요. 관찰하기에서 물 높이를 맞춰 주세요.';
+  if(d.a>d.b)return `뿌리 있는 파의 물은 ${d.a} mL, 뿌리 없는 파의 물은 ${d.b} mL 줄었어요. 뿌리 있는 파의 물이 ${d.a-d.b} mL 더 많이 줄었어요.`;
+  if(d.b>d.a)return `뿌리 있는 파의 물은 ${d.a} mL, 뿌리 없는 파의 물은 ${d.b} mL 줄었어요. 뿌리 없는 파의 물이 더 많이 줄었어요.`;
+  return `두 파의 물이 똑같이 ${d.a} mL 줄었어요.`}
+
+function conclHTML(Q,concept,e){const allOk=Q.every((q,i)=>e.a[i]===qAns(i));
+  return head('결론 내리기','알맞은 답을 골라요.')+
+  Q.map((q,qi)=>{const ans=qAns(qi),cur=e.a[qi];return `<div class="section"><div class="qtitle"><span class="dot"></span>${qi+1}. ${q.q}</div>
+   <div class="choices c1">${q.opts.map(o=>{const cls=cur===o.id?(o.id===ans?'right':'wrong'):'';return choice('a'+qi,o.id,cur,o.t,'row '+cls)}).join('')}</div>
+   ${cur!=null?(cur===ans?`<div class="fb ok pop">맞아요! 잘했어요.</div>`:`<div class="fb no shake">다시 생각해 볼까요? ${q.hint}</div>`):''}</div>`}).join('')+
+  (allOk?`<div class="concept pop"><span class="lb">오늘 알게 된 것</span><p>${concept}</p>${sayBtn(concept)}</div>`:'')+
+  `<div class="section"><div class="qtitle"><span class="dot"></span>실험은 어땠나요?</div>
+   <div class="choices c3">${FEEL.map(f=>choice('feel',f.id,e.feel,`<span class="face">${f.face}</span>${f.label}`)).join('')}</div></div>
+  <div class="section"><label class="qtitle" for="note"><span class="dot"></span>하고 싶은 말 <span class="soft" style="font-size:17px;font-family:var(--body)">(안 써도 돼요)</span></label>
+   <textarea id="note" data-f="note" placeholder="예) 색이 변해서 신기했어요">${esc(e.note)}</textarea></div>`}
+
+function sheetHTML(){return head('결과지 완성!','내 실험 결과지를 그림으로 저장해요.')+
+  `<div class="sheet"><img id="sheetimg" alt="실험 결과지 미리보기"><p class="msg soft" id="smsg">결과지를 만들고 있어요…</p>
+  <button type="button" class="save" data-act="save">${ICON_SAVE} 그림으로 저장하기</button></div>`}
+
+/* ---------- events ---------- */
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,v=S.view;
+  if(a==='open'){const x=b.dataset.x;v.last=v.last||{};v.screen='flow';v.exp=x;go(v.last[x]||0);return}
+  if(a==='home'){v.screen='home';persist();render();scrollTo(0,0);return}
+  if(a==='go'){go(+b.dataset.i);return}
+  if(a==='say'){speak(b.dataset.text);return}
+  if(a==='askreset'){document.getElementById('resetrow').innerHTML='<span>정말 모두 지울까요?</span><button type="button" class="danger" data-act="reset">네, 지워요</button><button type="button" class="small-btn" data-act="home">아니요</button>';return}
+  if(a==='reset'){S=fresh();persist();render();return}
+  if(a==='delphoto'){setPhoto(b.dataset.k,null);persist();render();return}
+  if(a==='save'){saveSheet();return}
+  if(a==='setstart'){setWater('start',+b.dataset.v);return}
+  if(a==='nud'){const k=b.dataset.k;setWater(k,curWater(k)+ +b.dataset.d);return}
+  if(a==='pick'){const e=E(),g=b.dataset.g,val=b.dataset.v,st=v.step;
+    if(g==='predict')e.predict=val;
+    else if(g==='stem'||g==='leaf'||g==='gA'||g==='gB')e[g]=val;
+    else if(g==='feel')e.feel=val;
+    else if(g==='a0'||g==='a1'){e.a[+g[1]]=val;if(val===qAns(+g[1]))speak('맞아요! 잘했어요.')}
+    persist();const y=scrollY;render();scrollTo(0,y);}
+});
+function go(i){S.view.step=Math.max(0,Math.min(STEPS.length-1,i));S.view.last=S.view.last||{};S.view.last[S.view.exp]=S.view.step;persist();render();scrollTo({top:0})}
+document.getElementById('prev').onclick=()=>go(S.view.step-1);
+document.getElementById('next').onclick=()=>go(S.view.step+1);
+function curWater(k){return S.onion[k==='start'?'start':k]}
+function setWater(k,val){val=Math.max(0,Math.min(200,Math.round(val)));
+  if(k==='start'){S.onion.start=val;const sv=document.getElementById('sv');if(sv){sv.innerHTML=val+'<small>mL</small>';sv.classList.remove('pop');void sv.offsetWidth;sv.classList.add('pop')}app.querySelectorAll('[data-act=setstart]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===val))}
+  else{S.onion[k]=val;const p=k[1];const el=app.querySelector(`[data-vv="${p}"]`);if(el)el.innerHTML=val+'<small>mL</small>'}
+  const r=app.querySelector(`[data-w="${k}"]`);if(r&&+r.value!==val)r.value=val;
+  const host=k==='start'?document.getElementById('startcyl'):app.querySelector(`[data-plant="${k[1]}"] .cylwrap`);
+  if(host)host.innerHTML=cylSVG(val,S.onion.start);
+  persist()}
+document.addEventListener('input',ev=>{const t=ev.target;
+  if(t.dataset.w){setWater(t.dataset.w,+t.value);return}
+  const f=t.dataset.f;if(!f)return;
+  if(f==='name'||f==='date')S[f]=t.value;
+  else if(f==='memo')S.lily.memo=t.value;
+  else if(f==='note')E().note=t.value;
+  persist()});
+document.addEventListener('change',ev=>{const t=ev.target;if(!t.dataset.photo||!t.files||!t.files[0])return;
+  const x=t.dataset.photo;resizeImg(t.files[0]).then(url=>{setPhoto(x,url);persist();const y=scrollY;render();scrollTo(0,y)}).catch(()=>{alertMsg('사진을 열 수 없어요. 다른 사진을 골라 주세요.')})});
+function alertMsg(m){const c=document.getElementById('card');if(c){const d=document.createElement('div');d.className='fb no';d.textContent=m;c.prepend(d)}}
+function resizeImg(file){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const im=new Image();
+  im.onload=()=>{const max=1100,s=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',.82))};
+  im.onerror=()=>{URL.revokeObjectURL(url);rej()};im.src=url})}
+
+/* ---------- result sheet (canvas) ---------- */
+const P={paper:'#FBFAF4',grid:'#E3EBEE',gridM:'#CEDCE2',ink:'#1F3550',soft:'#5E6E7E',line:'#C9D4DB',head:'#EEF3F5',panel:'#FFFFFF',leaf:'#2F7D3B',leafS:'#E3F1DF',dye:'#B8283C',dyeS:'#FBE4E8',water:'#2A78C2',waterS:'#E0EDF9',rootB:'#C96F1C',rootBS:'#FCEEDF',ok:'#2F7D3B',tape:'rgba(226,208,150,.78)'};
+const FD='"IBM Plex Sans KR","Gothic A1",sans-serif',FB='"Gothic A1","Noto Sans KR",sans-serif';
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function wrap(ctx,text,maxW){const out=[];String(text).split('\n').forEach(par=>{let line='';par.split(' ').forEach(w=>{const t=line?line+' '+w:w;
+  if(ctx.measureText(t).width<=maxW){line=t;return}
+  if(line)out.push(line);line='';
+  if(ctx.measureText(w).width>maxW){let s='';for(const ch of w){if(ctx.measureText(s+ch).width>maxW){out.push(s);s=ch}else s+=ch}line=s}else line=w});out.push(line)});return out}
+function text(ctx,t,x,y,maxW,lh){const ls=wrap(ctx,t,maxW);ls.forEach((l,i)=>ctx.fillText(l,x,y+i*lh));return ls.length*lh}
+function loadImg(src){return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+function grid(ctx,W,H){ctx.fillStyle=P.paper;ctx.fillRect(0,0,W,H);ctx.lineWidth=1;
+  for(let x=0;x<=W;x+=24){ctx.strokeStyle=x%120===0?P.gridM:P.grid;ctx.beginPath();ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,H);ctx.stroke()}
+  for(let y=0;y<=H;y+=24){ctx.strokeStyle=y%120===0?P.gridM:P.grid;ctx.beginPath();ctx.moveTo(0,y+.5);ctx.lineTo(W,y+.5);ctx.stroke()}}
+function sec(ctx,n,label,x,y,w){ctx.strokeStyle=P.ink;ctx.lineWidth=2.5;ctx.strokeRect(x,y,42,42);
+  ctx.fillStyle=P.ink;ctx.font=`bold 25px ${FD}`;ctx.textAlign='center';ctx.fillText(n,x+21,y+32);ctx.textAlign='left';
+  ctx.font=`bold 33px ${FD}`;ctx.fillText(label,x+58,y+34);const lw=ctx.measureText(label).width;
+  ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+58+lw+18,y+28);ctx.lineTo(x+w,y+28);ctx.stroke();return y+88}
+function flask(ctx,cx,cy,col){ctx.save();ctx.strokeStyle=P.ink;ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,54,0,7);ctx.stroke();
+  ctx.setLineDash([3,5]);ctx.beginPath();ctx.arc(cx,cy,46,0,7);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=col;ctx.globalAlpha=.85;ctx.beginPath();ctx.moveTo(cx-22,cy+10);ctx.lineTo(cx+22,cy+10);ctx.lineTo(cx+30,cy+26);ctx.lineTo(cx-30,cy+26);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+  ctx.lineWidth=3.5;ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(cx-10,cy-30);ctx.lineTo(cx-10,cy-6);ctx.lineTo(cx-30,cy+26);ctx.lineTo(cx+30,cy+26);ctx.lineTo(cx+10,cy-6);ctx.lineTo(cx+10,cy-30);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx-15,cy-30);ctx.lineTo(cx+15,cy-30);ctx.stroke();
+  ctx.fillStyle=col;[[-4,-14,4],[6,-2,3],[-8,2,2.5]].forEach(([dx,dy,r])=>{ctx.beginPath();ctx.arc(cx+dx,cy+dy,r,0,7);ctx.fill()});ctx.restore()}
+function tape(ctx,x,y,rot){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.fillStyle=P.tape;ctx.fillRect(-42,-13,84,26);ctx.restore()}
+function figure(ctx,img,x,y,w,h,cap){ctx.save();ctx.shadowColor='rgba(31,53,80,.16)';ctx.shadowBlur=14;ctx.shadowOffsetY=4;ctx.fillStyle=P.panel;ctx.fillRect(x,y,w,h);ctx.restore();
+  ctx.strokeStyle=P.line;ctx.lineWidth=1.5;ctx.strokeRect(x,y,w,h);
+  const pad=14,ih=h-pad*2-46,iw=w-pad*2;ctx.fillStyle='#F2F5F6';ctx.fillRect(x+pad,y+pad,iw,ih);
+  if(img){const sc=Math.min(iw/img.width,ih/img.height),dw=img.width*sc,dh=img.height*sc;ctx.drawImage(img,x+pad+(iw-dw)/2,y+pad+(ih-dh)/2,dw,dh)}
+  else{ctx.fillStyle=P.soft;ctx.font=`22px ${FB}`;ctx.textAlign='center';ctx.fillText('사진 없음',x+w/2,y+pad+ih/2+8);ctx.textAlign='left'}
+  ctx.fillStyle=P.ink;ctx.font=`21px ${FB}`;ctx.textAlign='center';ctx.fillText(cap,x+w/2,y+h-pad-12);ctx.textAlign='left';
+  tape(ctx,x+40,y+4,-.12);tape(ctx,x+w-40,y+4,.12)}
+function cell(ctx,x,y,w,h,fill){ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);ctx.strokeStyle=P.ink;ctx.lineWidth=1.5;ctx.strokeRect(x,y,w,h)}
+function canvasCyl(ctx,x,y,h,v,start){const w=70,bot=y+h,yy=val=>bot-(Math.max(0,Math.min(200,val))/200)*h;
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(x,y-6,w,h+6);ctx.fillStyle=P.water;ctx.globalAlpha=.75;ctx.fillRect(x+3,yy(v),w-6,bot-yy(v));ctx.globalAlpha=1;
+  ctx.strokeStyle=P.ink;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x-8,y-6);ctx.lineTo(x,y-6);ctx.lineTo(x,bot);ctx.lineTo(x+w,bot);ctx.lineTo(x+w,y-6);ctx.lineTo(x+w+8,y-6);ctx.stroke();
+  ctx.fillRect(x-14,bot,w+28,6);
+  ctx.font=`17px ${FB}`;ctx.fillStyle=P.ink;ctx.textAlign='right';ctx.lineWidth=2;
+  for(let t=0;t<=200;t+=10){const big=t%50===0;ctx.beginPath();ctx.moveTo(x,yy(t));ctx.lineTo(x+(big?18:9),yy(t));ctx.stroke();if(big)ctx.fillText(t,x-10,yy(t)+6)}ctx.textAlign='left';
+  ctx.strokeStyle=P.dye;ctx.lineWidth=4;ctx.setLineDash([10,6]);ctx.beginPath();ctx.moveTo(x-6,yy(start));ctx.lineTo(x+w+6,yy(start));ctx.stroke();ctx.setLineDash([])}
+
+let lastBlob=null;
+async function drawSheet(){const x=S.view.exp,e=S[x],isL=x==='lily';
+  try{await Promise.all([document.fonts.load(`bold 40px "IBM Plex Sans KR"`),document.fonts.load(`22px "Gothic A1"`),document.fonts.load(`bold 22px "Gothic A1"`)])}catch(er){}
+  const photo=isL?null:await loadImg(e.photo);const lp={};if(isL)for(const k of ['bw','bc','aw','ac'])lp[k]=await loadImg(e.photos[k]);
+  const W=1240,M=72,CW=W-M*2,c=document.createElement('canvas');c.width=W;c.height=4200;const ctx=c.getContext('2d');
+  const acc=isL?P.dye:P.leaf,accS=isL?P.dyeS:P.leafS;
+  grid(ctx,W,c.height);
+  // header strip
+  let y=56;ctx.fillStyle=P.ink;ctx.fillRect(M,y,CW,52);
+  ctx.fillStyle='#FFFFFF';ctx.font=`20px ${FB}`;try{ctx.letterSpacing='6px'}catch(er){}ctx.fillText('SCIENCE LAB REPORT',M+24,y+34);try{ctx.letterSpacing='0px'}catch(er){}
+  ctx.textAlign='right';ctx.fillText('과학 실험 보고서 · 3단원 식물의 구조와 기능',M+CW-24,y+34);ctx.textAlign='left';
+  y+=52+34;
+  flask(ctx,M+58,y+58,acc);
+  ctx.fillStyle=P.ink;ctx.font=`bold 62px ${FD}`;ctx.fillText(isL?'백합 줄기 실험':'파 뿌리 실험',M+140,y+66);
+  ctx.fillStyle=acc;ctx.font=`26px ${FB}`;ctx.fillText(isL?'줄기의 생김새와 하는 일을 알아볼까?':'뿌리의 생김새와 하는 일을 알아볼까?',M+142,y+110);
+  y+=144;
+  // record table
+  const cells=[['관찰자',S.name||''],['관찰 날짜',(S.date||'').replace(/-/g,'. ')],['실험 대상',isL?'백합':'파 2개 (A, B)']];const cw3=CW/3,lw=124;
+  cells.forEach(([lb,v],i)=>{const cx=M+i*cw3;cell(ctx,cx,y,lw,58,P.head);cell(ctx,cx+lw,y,cw3-lw,58,P.panel);
+    ctx.fillStyle=P.soft;ctx.font=`20px ${FB}`;ctx.textAlign='center';ctx.fillText(lb,cx+lw/2,y+36);ctx.textAlign='left';
+    ctx.fillStyle=P.ink;ctx.font=`bold 25px ${FD}`;ctx.fillText(v||'',cx+lw+16,y+39)});
+  y+=58+20;ctx.fillStyle=P.ink;ctx.fillRect(M,y,CW,3);ctx.fillRect(M,y+7,CW,1.5);y+=52;
+  // 1 purpose
+  let n=1;y=sec(ctx,n++,'실험 목적',M,y,CW);
+  ctx.fillStyle=P.ink;ctx.font=`26px ${FB}`;y+=text(ctx,isL?'줄기가 어떤 일을 하는지 실험으로 알아봐요.':'뿌리가 어떤 일을 하는지 실험으로 알아봐요.',M+8,y,CW-8,38)+36;
+  // 2 hypothesis
+  y=sec(ctx,n++,'나의 예상 (가설)',M,y,CW);
+  const pq=isL?'백합은 어떻게 될까요?':'어느 쪽 물이 더 많이 줄어들까요?';const pa=(isL?LPRED:OPRED).find(p=>p.id===e.predict);
+  ctx.fillStyle=P.soft;ctx.font=`23px ${FB}`;ctx.fillText('질문 · '+pq,M+8,y);y+=24;
+  cell(ctx,M,y,CW,66,P.panel);ctx.fillStyle=P.ink;ctx.font=`bold 28px ${FD}`;ctx.fillText('→ '+(pa?pa.label:''),M+22,y+44);y+=66+56;
+  // 3 method
+  y=sec(ctx,n++,'준비물과 실험 방법',M,y,CW);
+  const mats=isL?'백합, 삼각 플라스크, 물, 붉은색 식용 색소, 칼, 유리판':'파 2개, 눈금실린더(200 mL) 2개, 물, 탈지면, 유성펜, 가위';
+  ctx.font=`23px ${FB}`;const mw=ctx.measureText('준비물').width+28;ctx.strokeStyle=P.ink;ctx.lineWidth=1.5;rr(ctx,M+8,y-27,mw,38,19);ctx.stroke();ctx.fillStyle=P.ink;ctx.fillText('준비물',M+22,y);
+  ctx.font=`24px ${FB}`;y+=text(ctx,mats,M+mw+24,y,CW-mw-24,36)+22;
+  const steps=isL?['백합 줄기를 붉은 색소를 녹인 물에 꽂아요.','비교할 백합 한 송이는 색소 물에 꽂지 않아요.','햇빛이 잘 드는 곳에 두고, 며칠 뒤 두 백합의 모습과 줄기 단면을 관찰해요.']
+                  :['A 파는 잎만 자르고(뿌리 있음), B 파는 잎과 뿌리를 잘라요.',`같은 양(${e.start} mL)의 물이 담긴 눈금실린더에 넣고 물 높이를 표시해요.`,'햇빛이 잘 드는 곳에 두고, 며칠 뒤 물 높이와 파가 자란 정도를 관찰해요.'];
+  steps.forEach((st,i)=>{ctx.strokeStyle=P.ink;ctx.lineWidth=2;ctx.beginPath();ctx.arc(M+24,y-9,17,0,7);ctx.stroke();ctx.fillStyle=P.ink;ctx.font=`bold 21px ${FD}`;ctx.textAlign='center';ctx.fillText(i+1,M+24,y);ctx.textAlign='left';
+    ctx.font=`25px ${FB}`;y+=text(ctx,st,M+58,y,CW-60,38)+12});
+  y+=40;
+  // 4 observation
+  y=sec(ctx,n++,'관찰 기록',M,y,CW);let fig=1;
+  if(isL){const g2=32,pw=(CW-g2)/2,ph=470;
+    if(Object.values(lp).some(Boolean)){LPH.forEach((g,gi)=>{const col=gi?P.dye:P.leaf;
+      ctx.fillStyle=col;ctx.fillRect(M,y-22,12,26);ctx.font=`bold 26px ${FD}`;ctx.fillText(g.g,M+24,y);const w0=ctx.measureText(g.g).width;
+      ctx.fillStyle=P.soft;ctx.font=`21px ${FB}`;ctx.fillText('('+g.sub+')',M+24+w0+12,y);y+=34;
+      g.items.forEach(([k,lb],j)=>figure(ctx,lp[k],M+j*(pw+g2),y,pw,ph,`그림 ${fig++}. ${lb}`));y+=ph+44})}
+    const cols=[200,(CW-200-70)/2,70,(CW-200-70)/2];const hdr=['구분','처음','','실험 뒤'];let tx=M;
+    cols.forEach((w,i)=>{cell(ctx,tx,y,w,54,P.head);ctx.fillStyle=P.ink;ctx.font=`bold 23px ${FD}`;ctx.textAlign='center';ctx.fillText(hdr[i],tx+w/2,y+37);ctx.textAlign='left';tx+=w});y+=54;
+    [['줄기','stem'],['잎','leaf']].forEach(([nm,k])=>{const a=LILY_COLORS[0],b=LILY_COLORS.find(c=>c.id===e[k]);let tx=M;
+      cols.forEach((w,i)=>{cell(ctx,tx,y,w,76,P.panel);tx+=w});
+      ctx.fillStyle=P.ink;ctx.font=`bold 26px ${FD}`;ctx.textAlign='center';ctx.fillText(nm,M+100,y+48);ctx.fillStyle=P.soft;ctx.font=`32px ${FB}`;ctx.fillText('→',M+cols[0]+cols[1]+35,y+50);ctx.textAlign='left';
+      [[a,M+cols[0]],[b,M+cols[0]+cols[1]+cols[2]]].forEach(([c,cx0])=>{ctx.fillStyle=c?c.hex:P.line;ctx.beginPath();ctx.arc(cx0+50,y+38,20,0,7);ctx.fill();ctx.strokeStyle='rgba(0,0,0,.15)';ctx.lineWidth=2;ctx.stroke();
+        ctx.fillStyle=P.ink;ctx.font=`25px ${FB}`;ctx.fillText(c?c.label:'—',cx0+84,y+47)});y+=76});
+    y+=34;if(e.memo){ctx.fillStyle=P.soft;ctx.font=`23px ${FB}`;ctx.fillText('그 밖에 관찰한 것',M+8,y);y+=38;ctx.fillStyle=P.ink;ctx.font=`bold 25px ${FD}`;y+=text(ctx,e.memo,M+8,y,CW-8,40)+10}}
+  else{if(photo){const fh=Math.min(700,(CW-28)*photo.height/photo.width+88),fw=Math.min(CW,(fh-88)*photo.width/photo.height+28);figure(ctx,photo,M+(CW-fw)/2,y,fw,fh,`그림 ${fig++}. 실험이 끝난 뒤의 모습`);y+=fh+50}
+    const dr=drops();const base=y+20,h=280;ctx.fillStyle=P.panel;ctx.fillRect(M,y-10,CW,h+150);ctx.strokeStyle=P.line;ctx.lineWidth=1.5;ctx.strokeRect(M,y-10,CW,h+150);
+    ['A','B'].forEach((k,i)=>{const bx=M+110+i*500,last=e['w'+k];canvasCyl(ctx,bx,base+10,h-20,last??e.start,e.start);
+      ctx.fillStyle=k==='A'?P.leaf:P.rootB;ctx.font=`bold 26px ${FD}`;ctx.fillText(k==='A'?'A 뿌리 있는 파':'B 뿌리 없는 파',bx+110,base+44);
+      ctx.fillStyle=P.soft;ctx.font=`22px ${FB}`;ctx.fillText(`${e.start} mL → ${last??'—'} mL`,bx+110,base+84);
+      const dd=dr[k.toLowerCase()];ctx.fillStyle=P.water;ctx.font=`bold 33px ${FD}`;ctx.fillText(dd==null?'—':`${dd} mL 줄었어요`,bx+110,base+136)});
+    ctx.fillStyle=P.soft;ctx.font=`19px ${FB}`;ctx.strokeStyle=P.dye;ctx.lineWidth=4;ctx.setLineDash([10,6]);ctx.beginPath();ctx.moveTo(M+CW-230,base+h+40);ctx.lineTo(M+CW-190,base+h+40);ctx.stroke();ctx.setLineDash([]);ctx.fillText('처음 물 높이',M+CW-178,base+h+47);
+    ctx.fillStyle=P.ink;ctx.font=`21px ${FB}`;ctx.textAlign='center';ctx.fillText(`그림 ${fig++}. 눈금실린더 물 높이 비교`,M+CW/2,base+h+90);ctx.textAlign='left';
+    y=base+h+170;
+    const cols=[230,(CW-230)/4,(CW-230)/4,(CW-230)/4,(CW-230)/4],hdr=['구분','처음 물','실험 뒤 물','줄어든 물','자란 정도'];let tx=M;
+    cols.forEach((w,i)=>{cell(ctx,tx,y,w,54,P.head);ctx.fillStyle=P.ink;ctx.font=`bold 22px ${FD}`;ctx.textAlign='center';ctx.fillText(hdr[i],tx+w/2,y+37);tx+=w});y+=54;
+    ['A','B'].forEach(k=>{const last=e['w'+k],dd=dr[k.toLowerCase()];const vals=[k==='A'?'A 뿌리 있는 파':'B 뿌리 없는 파',e.start+' mL',(last??'—')+' mL',dd==null?'—':dd+' mL',growLabel(e['g'+k])||'—'];let tx=M;
+      cols.forEach((w,i)=>{cell(ctx,tx,y,w,64,P.panel);ctx.fillStyle=i===0?(k==='A'?P.leaf:P.rootB):P.ink;ctx.font=i===0?`bold 22px ${FB}`:i===3?`bold 25px ${FD}`:`23px ${FB}`;ctx.fillText(vals[i],tx+w/2,y+41);tx+=w});y+=64});
+    ctx.textAlign='left';y+=40}
+  // 5 result
+  y=sec(ctx,n++,'실험 결과',M,y,CW);
+  const rs=isL?lilySentence():onionSentence();ctx.font=`bold 27px ${FD}`;const rl=wrap(ctx,rs,CW-60);const rh=rl.length*46+44;
+  ctx.fillStyle=accS;ctx.fillRect(M,y-8,CW,rh);ctx.strokeStyle=acc;ctx.lineWidth=2;ctx.strokeRect(M,y-8,CW,rh);
+  ctx.fillStyle=P.ink;rl.forEach((l,i)=>ctx.fillText(l,M+30,y+36+i*46));y+=rh+52;
+  // 6 conclusion
+  y=sec(ctx,n++,'결론',M,y,CW);
+  const Q=isL?LQ:OQ;Q.forEach((q,qi)=>{const o=q.opts.find(o=>o.id===e.a[qi]),ok=e.a[qi]!=null&&e.a[qi]===qAns(qi);
+    ctx.fillStyle=P.soft;ctx.font=`23px ${FB}`;ctx.fillText(`Q${qi+1}. ${q.q}`,M+8,y);y+=46;
+    ctx.fillStyle=ok?P.ok:P.ink;ctx.font=`bold 27px ${FD}`;ctx.fillText((o?(ok?'✔ ':'· ')+o.t:'—'),M+30,y);y+=58});
+  const allOk=Q.every((q,i)=>e.a[i]===qAns(i));const ct=isL?LCONCEPT:OCONCEPT;
+  ctx.font=`26px ${FB}`;const cl=wrap(ctx,ct,CW-72);const bh=cl.length*40+96;
+  ctx.fillStyle=P.panel;ctx.fillRect(M,y,CW,bh);ctx.strokeStyle=P.ink;ctx.lineWidth=3;ctx.strokeRect(M,y,CW,bh);ctx.lineWidth=1.2;ctx.strokeRect(M+7,y+7,CW-14,bh-14);
+  ctx.fillStyle=P.ok;ctx.font=`bold 28px ${FD}`;ctx.fillText(allOk?'★ 오늘 알게 된 것':'★ 정리',M+34,y+52);
+  ctx.fillStyle=P.ink;ctx.font=`26px ${FB}`;cl.forEach((l,i)=>ctx.fillText(l,M+34,y+96+i*40));y+=bh+56;
+  // 7 feeling
+  const f=FEEL.find(f=>f.id===e.feel);
+  if(f||e.note){y=sec(ctx,n++,'느낀 점',M,y,CW);ctx.fillStyle=P.ink;
+    if(f){ctx.font=`44px ${FB}`;ctx.fillText(f.face,M+8,y+8);ctx.font=`bold 28px ${FD}`;ctx.fillText(f.label,M+70,y+4);y+=58}
+    if(e.note){ctx.font=`bold 25px ${FD}`;y+=text(ctx,e.note,M+8,y,CW-8,42)}y+=34}
+  // footer: signature + stamp
+  y+=10;ctx.fillStyle=P.ink;ctx.fillRect(M,y,CW,1.5);y+=70;
+  ctx.font=`23px ${FB}`;ctx.fillStyle=P.soft;ctx.fillText('관찰자 서명',M,y);ctx.strokeStyle=P.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(M+140,y+6);ctx.lineTo(M+520,y+6);ctx.stroke();
+  ctx.fillStyle=P.ink;ctx.font=`bold 30px ${FD}`;ctx.fillText(S.name||'',M+160,y-2);
+  ctx.strokeStyle=P.dye;ctx.lineWidth=2;ctx.setLineDash([6,6]);ctx.beginPath();ctx.arc(M+CW-70,y-14,56,0,7);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=P.dye;ctx.font=`bold 23px ${FD}`;ctx.textAlign='center';ctx.fillText('확인',M+CW-70,y-4);ctx.textAlign='right';ctx.fillStyle=P.soft;ctx.font=`20px ${FB}`;ctx.fillText('선생님',M+CW-142,y);ctx.textAlign='left';
+  y+=70;
+  const H=Math.ceil(y+30);const out=document.createElement('canvas');out.width=W;out.height=H;const o=out.getContext('2d');o.drawImage(c,0,0);
+  return out}
+let building=0;
+async function buildSheet(){const my=++building;const img=document.getElementById('sheetimg'),msg=document.getElementById('smsg');
+  try{const cv=await drawSheet();if(my!==building)return;
+    lastBlob=await new Promise(r=>cv.toBlob(r,'image/png'));
+    if(!document.getElementById('sheetimg'))return;
+    document.getElementById('sheetimg').src=cv.toDataURL('image/png');
+    document.getElementById('smsg').textContent='아래 버튼을 누르면 그림 파일(PNG)로 저장돼요.'}
+  catch(er){if(msg)msg.textContent='결과지를 만들지 못했어요. 다시 눌러 주세요.'}}
+let dl=null;
+(async()=>{try{if(window.claude&&claude.use)dl=await claude.use('downloads')}catch(e){dl=null}})();
+async function saveSheet(){const msg=document.getElementById('smsg');if(!lastBlob){await buildSheet()}if(!lastBlob)return;
+  const nm=(S.view.exp==='lily'?'백합줄기실험':'파뿌리실험')+'_결과지'+(S.name?'_'+S.name.trim().replace(/\s+/g,''):'')+'.png';
+  if(dl){try{await dl.save({filename:nm,data:lastBlob});msg.textContent='저장했어요! 잘했어요.';speak('저장했어요! 잘했어요.')}
+    catch(er){msg.textContent=er&&er.code==='declined'?'저장을 취소했어요. 다시 누르면 저장할 수 있어요.':'여기서는 저장이 안 돼요. 위 그림을 꾹 누르거나 오른쪽 클릭해서 저장해 주세요.'}return}
+  if(!window.claude){try{const a=document.createElement('a');a.href=URL.createObjectURL(lastBlob);a.download=nm;document.body.appendChild(a);a.click();a.remove();msg.textContent='저장했어요!';return}catch(er){}}
+  msg.textContent='위 그림을 꾹 누르거나 오른쪽 클릭해서 "이미지 저장"을 골라 주세요.'}
+
+render();
+})();
+</script>
+
+</body></html>
